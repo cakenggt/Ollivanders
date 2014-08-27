@@ -1228,4 +1228,23 @@ public class OllivandersListener implements Listener {
 	      }
 	    }
 	  }
+	  
+	  
+	  @EventHandler(priority = EventPriority.HIGHEST)
+	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event){
+		Player player = event.getPlayer();
+		PlayerInventory inventory = player.getInventory();
+		boolean itemHasCopy = false;
+		for(int i = 0; i < inventory.getSize();i++){
+		ItemStack item1 = inventory.getItem(i);
+		boolean Lore = item1.getItemMeta().getLore().contains("Copy");
+		if(Lore){itemHasCopy = true;}
+		else{itemHasCopy = false;}}
+		if(itemHasCopy){
+			if(event.getMessage().equalsIgnoreCase("/" + "sell")){
+				event.setCancelled(true);
+				player.sendMessage("You can't sell when you have fake items in your inventory!");
+			}}
+		
+	}
 	}
