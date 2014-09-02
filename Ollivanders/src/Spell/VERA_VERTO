@@ -3,6 +3,7 @@ package Spell;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import me.cakenggt.Ollivanders.Ollivanders;
@@ -26,10 +27,12 @@ public class VERA_VERTO extends Transfiguration implements Spell{
             move();
             for (Entity e : getCloseEntities(1)){
                 if (e.getType() != EntityType.PLAYER){
+                	if(e instanceof LivingEntity){
                     location = e.getLocation();
                     location.getBlock().setType(Material.FLOWER_POT);
                     transfigureEntity(e, null, null);
                     return;
+                }
                 }
             }
         }
