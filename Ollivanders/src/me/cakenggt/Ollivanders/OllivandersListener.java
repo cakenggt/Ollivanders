@@ -226,8 +226,8 @@ public class OllivandersListener implements Listener {
 	            }
 	        }
 	        Set<Player> remRecipients = new HashSet<Player>();
-	        Set<Player> remRecipients2 = new HashSet<Player>();
 	        for (Player recipient : recipients){
+	  
 	            double distance;
 	            try {
 	                distance = recipient.getLocation().distance(sender.getLocation());
@@ -247,21 +247,14 @@ public class OllivandersListener implements Listener {
 	                    }
 	                }
 	            }
-	               
-	                if (spell != null){
-	                    if (distance > chatDistance || distance == -1){
-	                        remRecipients2.add(recipient);
-	                    }
-	                }
+	            
+	            Player sender2 = event.getPlayer();
 	                if (surdumliattos.size() > 0){
 	                    for (StationarySpellObj surdumliatto : surdumliattos){
-	                        Location senLoc = sender.getLocation();
+							Location senLoc = sender2.getLocation();
 	                        Location recLoc = recipient.getLocation();
-	                        if (surdumliatto.isInside(recLoc)){
-	                            remRecipients2.add(recipient);
-	                        }
-	                        if(surdumliatto.isInside(senLoc)){
-	                        	remRecipients2.remove(recipient);
+	                        if(!surdumliatto.isInside(senLoc) && surdumliatto.isInside(recLoc)){
+	                        	remRecipients.add(recipient);
 	                        }
 	                    }
 	            }
@@ -282,22 +275,8 @@ public class OllivandersListener implements Listener {
 	                        + "to a unmodifiable set.");
 	            }
 	        }
-	        for (Player remRec2 : remRecipients2){
-	            try {
-	                if (remRec2.isPermissionSet("Ollivanders.BYPASS")){
-	                    if (!remRec2.hasPermission("Ollivanders.BYPASS")){
-	                        recipients.remove(remRec2);
-	                    }
-	                }
-	                else{
-	                    recipients.remove(remRec2);
-	                }
-	            }
-	            catch (UnsupportedOperationException e) {
-	                p.getLogger().warning("Chat was unable to be removed due "
-	                        + "to a unmodifiable set.");
-	            }
-	        }
+	       
+	        
 		//End code for chat falloff
 
 		//Begin code for spell parsing
@@ -312,7 +291,7 @@ public class OllivandersListener implements Listener {
 			}
 			else{
 				int uses = p.getOPlayer(sender).getSpellCount().get(spell);
-				castSuccess = Math.random() < (1.0-(100.0/(uses+101.0)));
+				castSuccess = Math.random() > (1000.0/(uses+101.0));
 			}
 			if (castSuccess){
 				String[] words = message2.split(" ");
@@ -338,9 +317,9 @@ public class OllivandersListener implements Listener {
 					}
 				}
 			}
-		}
+		}}
 		//End code for spell parsing
-	}
+	
 
 	/**
 	 * Apparates sender to either specified location or to eye target location. Respects anti-apparition and anti-disapparition spells.
@@ -551,7 +530,7 @@ public class OllivandersListener implements Listener {
 			Spells[] spells = Spells.values();
 			List<Spells> knownSpells = new ArrayList<Spells>();
 			for (Spells spell : spells){
-				if (p.getSpellNum(event.getPlayer(), spell) >= 100){
+				if (p.getSpellNum(event.getPlayer(), spell) >= 10000){
 					//if (spell != Spells.AVADA_KEDAVRA && spell != Spells.CRUCIO && spell != Spells.IMPERIO){
 					if (spell != Spells.AVADA_KEDAVRA){
 						knownSpells.add(spell);
@@ -1228,23 +1207,4 @@ public class OllivandersListener implements Listener {
 	      }
 	    }
 	  }
-	  
-	  
-	  @EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event){
-		Player player = event.getPlayer();
-		PlayerInventory inventory = player.getInventory();
-		boolean itemHasCopy = false;
-		for(int i = 0; i < inventory.getSize();i++){
-		ItemStack item1 = inventory.getItem(i);
-		boolean Lore = item1.getItemMeta().getLore().contains("Copy");
-		if(Lore){itemHasCopy = true;}
-		else{itemHasCopy = false;}}
-		if(itemHasCopy){
-			if(event.getMessage().equalsIgnoreCase("/" + "sell")){
-				event.setCancelled(true);
-				player.sendMessage("You can't sell when you have fake items in your inventory!");
-			}}
-		
-	}
 	}
