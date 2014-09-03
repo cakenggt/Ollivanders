@@ -6,16 +6,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.bukkit.DyeColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Giant;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.material.Colorable;
+import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
 /**
@@ -225,5 +229,14 @@ public abstract class SpellProjectile{
 	 */
 	public void revert(){
 
+	}
+	
+	public void ColorChange(Block block, DyeColor newColor){
+		BlockState bs = block.getState();
+		Colorable colorable = (Colorable) bs.getData();
+		colorable.setColor(newColor);
+		bs.setData((MaterialData) colorable);
+		bs.update();
+		kill();
 	}
 }
