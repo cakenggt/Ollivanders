@@ -278,6 +278,7 @@ public class SpellBookParser{
 	public final static String WINGARDIUM_LEVIOSA = "Wingardium leviosa will allow you to lift up blocks within a radius of "
 			+ "the spell's impact, as long as you are crouching. The radius depends on your experience. When you drop "
 			+ "the blocks, they will fall like sand.";
+	public final static String VERA_VERTO = "Vera verto will change an animal or item into a water goblet.";
 
 	/**
 	 * Encodes in the lore of the book the spells and levels the author is at
@@ -389,7 +390,7 @@ public class SpellBookParser{
 			inside += str + " ";
 		}
 		bm.setPages(splitEqually(inside, 250));
-		bm = kitEncode(bm, 200);
+		bm = kitEncode(bm, 5000);
 		item.setItemMeta(bm);
 		item.setAmount(amount);
 		books.add(item);
@@ -442,7 +443,7 @@ public class SpellBookParser{
 		bookMap.put("Achievements in Charming",
 				AGUAMENTI + N + EBUBLIO + N + HERBIVICUS + N +
 				LUMOS_DUO + N + LUMOS_MAXIMA + N + DIMMINUENDO + N + 
-				EPISKEY + N + ALIQUAM_FLOO + N + VOLATUS);
+				EPISKEY + N + ALIQUAM_FLOO + N + VOLATUS + N + VERA_VERTO);
 		bookMap.put("Extreme Incantations",
 				ALARTE_ASCENDARE + N + LUMOS_MAXIMA + N + 
 				OBLIVIATE + N + ASCENDIO + N + FORSKNING + N + VOLATUS + N + 
