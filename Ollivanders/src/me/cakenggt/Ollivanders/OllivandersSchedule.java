@@ -38,6 +38,7 @@ class OllivandersSchedule implements Runnable{
 	Ollivanders p;
 	int counter = 0;
 	static Set<UUID> flying = new HashSet<UUID>();
+	  Set<UUID> onBroom = new HashSet<UUID>();
 	public OllivandersSchedule(Ollivanders plugin) {
 		p = plugin;
 	}
@@ -299,7 +300,7 @@ class OllivandersSchedule implements Runnable{
 				return;
 			}
 			double experience = p.getOPlayer(player).getSpellCount().get(Spells.INFORMOUS);
-			if (Math.random() < experience/1000.0){
+			if (Math.random() < experience/5000.0){
 				//The scrying is successful
 				Prophecy prophecy = new Prophecy(player);
 				//Prophecy prophecy = new Prophecy(player, 2000, 30000);
@@ -354,36 +355,50 @@ class OllivandersSchedule implements Runnable{
 	/**Goes through all players and sets any holding a broom to flying
 	 * 
 	 */
-	private void broomSched(){
-		playerIter:
-			for (Player player : p.getServer().getOnlinePlayers()){
-				if (p.isBroom(player.getItemInHand()) && p.canLive(player.getLocation(), Spells.VOLATUS)){
-					player.setAllowFlight(true);
-					player.setFlying(true);
-					if (flying.contains(player.getUniqueId())){
-						Vector broomVec = player.getLocation().getDirection().clone();
-						broomVec.multiply(Math.sqrt(player.getItemInHand().getEnchantmentLevel(Enchantment.PROTECTION_FALL))/40.0);
-						player.setVelocity(player.getVelocity().add(broomVec));
-					}
-				}
-				else{
-					if (player.getGameMode() == GameMode.SURVIVAL){
-						for (OEffect effect : p.getOPlayer(player).getEffects()){
-							if (effect instanceof VENTO_FOLIO){
-								continue playerIter;
-							}
-						}
-						player.setAllowFlight(false);
-						player.setFlying(false);
-					}
-				}
-			}
+	  private void broomSched()
+	  {
+	    for (Player player : this.p.getServer().getOnlinePlayers()) {
+	      if ((this.p.isBroom(player.getItemInHand())) && (this.p.canLive(player.getLocation(), Spells.VOLATUS)))
+	      {
+	        player.setAllowFlight(true);
+	        player.setFlying(true);
+	        this.onBroom.add(player.getUniqueId());
+	        if (flying.contains(player.getUniqueId()))
+	        {
+	          Vector broomVec = player.getLocation().getDirection().clone();
+	          broomVec.multiply(Math.sqrt(player.getItemInHand().getEnchantmentLevel(Enchantment.PROTECTION_FALL)) / 40.0D);
+	          player.setVelocity(player.getVelocity().add(broomVec));
+	        }
+	      }
+	      else if ((player.getGameMode() == GameMode.SURVIVAL) && (this.onBroom.contains(player.getUniqueId())))
+	      {
+	        for (OEffect effect : this.p.getOPlayer(player).getEffects()) {
+	          if ((effect instanceof VENTO_FOLIO)) {
+	            break;
+	          }
+	        }
+	        player.sendMessage("Flight is disabled now");
+	        player.setAllowFlight(false);
+	        player.setFlying(false);
+	        this.onBroom.remove(player.getUniqueId());
+	      }
+	    }
+	  }
+	  
+	  public static Set<UUID> getFlying()
+	  {
+	    return flying;
+	  }
+	  
+	  public void dismountBrooms()
+	  {
+	    for (UUID u : this.onBroom)
+	    {
+	      Player p = Bukkit.getPlayer(u);
+	      
+	      p.sendMessage("Flight is disabled now");
+	      p.setAllowFlight(false);
+	      p.setFlying(false);
+	    }
+	  }
 	}
-
-	/**Get the set of flying players
-	 * @return set of flying players
-	 */
-	public static Set<UUID> getFlying(){
-		return flying;
-	}
-}
