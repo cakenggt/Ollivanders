@@ -1,0 +1,29 @@
+package Spell;
+
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import me.cakenggt.Ollivanders.Ollivanders;
+import me.cakenggt.Ollivanders.SpellProjectile;
+import me.cakenggt.Ollivanders.Spells;
+
+/**
+ * Gives nightvision for an amount of time depending on the player's
+ * spell level.
+ * @author lownes
+ *
+ */
+public class POINT_ME extends SpellProjectile implements Spell{
+
+	public POINT_ME(Ollivanders plugin, Player player, Spells name,
+			Double rightWand) {
+		super(plugin, player, name, rightWand);
+	}
+
+	public void checkEffect() {
+		Location loc = player.getLocation();
+		Location newloc = new Location(loc.getWorld(), loc.getX(), loc.getY(), loc.getZ(), 179, loc.getPitch());
+		player.teleport(newloc);
+		kill();
+	}
+	
+}
