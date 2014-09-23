@@ -1,0 +1,52 @@
+package Spell;
+
+import org.bukkit.DyeColor;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.material.Wool;
+
+import me.cakenggt.Ollivanders.Ollivanders;
+import me.cakenggt.Ollivanders.SpellProjectile;
+import me.cakenggt.Ollivanders.Spells;
+
+/**Changes color of sheep and colorable blocks
+ * @author lownes
+ *
+ */
+public class TINXI_AERIA extends SpellProjectile implements Spell{
+
+	public TINXI_AERIA(Ollivanders plugin, Player player, Spells name,
+			Double rightWand) {
+		super(plugin, player, name, rightWand);
+	}
+
+	public void checkEffect() {
+		move();
+		DyeColor newColor = DyeColor.BLUE;
+		if (getBlock().getType() != Material.AIR){
+			for (Block block : getBlocksInRadius(location, usesModifier/10)){
+				if(((Wool)block.getState().getData()).getColor() == DyeColor.WHITE){
+					ColorChange(block,newColor);
+				}
+				else if(((Wool)block.getState().getData()).getColor() == DyeColor.BLACK && usesModifier > 100){ ColorChange(block,newColor);}
+				else if(((Wool)block.getState().getData()).getColor() == DyeColor.BLUE && usesModifier > 500){ ColorChange(block,newColor);}
+				else if(((Wool)block.getState().getData()).getColor() == DyeColor.RED && usesModifier > 500){ ColorChange(block,newColor);}
+				else if(((Wool)block.getState().getData()).getColor() == DyeColor.YELLOW && usesModifier > 500){ ColorChange(block,newColor);}
+				else if(((Wool)block.getState().getData()).getColor() == DyeColor.BROWN && usesModifier > 700){ ColorChange(block,newColor);}
+				else if(((Wool)block.getState().getData()).getColor() == DyeColor.GRAY && usesModifier > 900){ ColorChange(block,newColor);}
+				else if(((Wool)block.getState().getData()).getColor() == DyeColor.SILVER && usesModifier > 1000){ ColorChange(block,newColor);}
+				else if(((Wool)block.getState().getData()).getColor() == DyeColor.LIME && usesModifier > 1200){ ColorChange(block,newColor);}
+				else if(((Wool)block.getState().getData()).getColor() == DyeColor.MAGENTA && usesModifier > 1400){ ColorChange(block,newColor);}
+				else if(((Wool)block.getState().getData()).getColor() == DyeColor.ORANGE && usesModifier > 1700){ ColorChange(block,newColor);}
+				else if(((Wool)block.getState().getData()).getColor() == DyeColor.PINK && usesModifier > 2000){ ColorChange(block,newColor);}
+				else if(((Wool)block.getState().getData()).getColor() == DyeColor.GREEN && usesModifier > 1100){ ColorChange(block,newColor);}
+				else if(((Wool)block.getState().getData()).getColor() == DyeColor.LIGHT_BLUE && usesModifier > 2200){ ColorChange(block,newColor);}
+				else if(((Wool)block.getState().getData()).getColor() == DyeColor.CYAN && usesModifier > 2500){ ColorChange(block,newColor);}
+				else if(((Wool)block.getState().getData()).getColor() == DyeColor.PURPLE && usesModifier > 3000){ ColorChange(block,newColor);}
+				else {return;}
+			}
+		}
+	}
+	
+}

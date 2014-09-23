@@ -60,6 +60,24 @@ public class GEMINIO extends SpellProjectile implements Spell{
 			stack.setAmount(1);
 			if (amount > 1){
 				item.getItemStack().setAmount(amount-1);
+				ItemStack copy = item.getItemStack().clone();
+				ItemMeta copymeta = copy.getItemMeta();
+				List<String> CopyLore = new ArrayList<String>();
+				if (copymeta.hasLore()){
+					CopyLore = copymeta.getLore();
+					for (int i = 1; i < lore.size(); i++){
+						if (CopyLore.get(i).contains("Copy")){
+							CopyLore.set(i, "Copy");
+						}
+						else{
+							CopyLore.add("Copy");
+						}
+					}
+				}
+				else{
+					CopyLore.add("Copy");
+				}
+				copymeta.setLore(CopyLore);
 			}
 			else{
 				item.remove();

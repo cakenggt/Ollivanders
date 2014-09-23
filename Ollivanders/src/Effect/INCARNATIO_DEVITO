@@ -1,0 +1,79 @@
+package Effect;
+
+import org.bukkit.entity.Chicken;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+
+import org.bukkit.entity.Player;
+
+import me.cakenggt.Ollivanders.Effects;
+import me.cakenggt.Ollivanders.OEffect;
+import me.cakenggt.Ollivanders.Ollivanders;
+
+/**Turns player into a duck
+
+ * @author lownes
+ *
+ */
+public class INCARNATIO_DEVITO extends OEffect implements Effect {
+
+    /**
+     *
+     */
+    private static final long serialVersionUID = -7925837173707212516L;
+    int duckID = -1;
+
+    public INCARNATIO_DEVITO(Player sender, Effects effect, int duration) {
+        super(sender, effect, duration);
+
+    }
+
+    @Override
+    public void checkEffect(Ollivanders p, Player owner) {
+    	age(1);
+        if (duration > 0){
+            if(duckID == -1){
+                Chicken duck = (Chicken) owner.getWorld().spawnEntity(owner.getLocation(), EntityType.CHICKEN);
+                duck.setCustomName("Duck");
+                duck.setCustomNameVisible(true);
+                duckID = duck.getEntityId();
+        }
+            else{
+                for (Entity entity : owner.getWorld().getEntities()){
+                    if (entity.getEntityId() == duckID && entity.getType() == EntityType.CHICKEN){
+                        Chicken duck = (Chicken)entity;
+                        if (duck.getCustomName().equals("Duck")){
+                            owner.teleport(entity);
+                            if(duck.getTarget() == owner){
+                                duck.setTarget(null);
+                            }
+                            if (duration > 0) {
+                                for (Player other : owner.getWorld().getPlayers()) {
+                                    other.hidePlayer(owner);
+                                }
+                            }
+                            return;
+                        }
+                    }
+                }
+            duration = 0;
+            }}
+        else{
+            if (duckID != -1){
+                for (Player other : owner.getWorld().getPlayers()){
+                    other.showPlayer(owner);
+                }
+                for (Entity entity : owner.getWorld().getEntities()){
+                    if (entity.getEntityId() == duckID && entity.getType() == EntityType.CHICKEN){
+                        if (((Chicken)entity).getCustomName().equals("Duck")){
+                            entity.remove();
+                            duckID = -1;
+                            return;
+                        }}
+                    }
+                }
+                duckID = -1;
+            }
+       
+   
+    }}

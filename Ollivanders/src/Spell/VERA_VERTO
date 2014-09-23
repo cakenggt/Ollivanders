@@ -1,0 +1,56 @@
+package Spell;
+
+import org.bukkit.Material;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+
+import me.cakenggt.Ollivanders.Ollivanders;
+import me.cakenggt.Ollivanders.Spells;
+import me.cakenggt.Ollivanders.Transfiguration;
+
+/**
+ * Turns an entity to flower pot. If the flowerpot is broken, the entity will not respawn at the end of the transfiguration.
+ * @author lownes
+ *
+ */
+public class VERA_VERTO extends Transfiguration implements Spell{
+   
+    public VERA_VERTO(Ollivanders plugin, Player player, Spells name,
+            Double rightWand) {
+        super(plugin, player, name, rightWand);
+    }
+
+    public void checkEffect() {
+        if (!hasTransfigured()){
+            move();
+            for (Entity e : getCloseEntities(1)){
+                if (e.getType() != EntityType.PLAYER){
+                	if(e instanceof LivingEntity){
+                    location = e.getLocation();
+                    location.getBlock().setType(Material.FLOWER_POT);
+                    transfigureEntity(e, null, null);
+                    return;
+                }
+                }
+            }
+        }
+        else{
+            if (lifeTicks > 160){
+                kill = true;
+                if (location.getBlock().getType() == Material.FLOWER_POT){
+                    location.getBlock().setType(Material.AIR);
+                    endTransfigure();
+                }
+            }
+            else{
+                lifeTicks ++;
+                if (location.getBlock().getType() != Material.FLOWER_POT){
+                    kill = true;
+                }
+            }
+        }
+    }
+   
+}

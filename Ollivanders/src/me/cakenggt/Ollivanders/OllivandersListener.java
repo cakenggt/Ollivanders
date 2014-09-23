@@ -49,6 +49,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerEditBookEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -211,51 +212,71 @@ public class OllivandersListener implements Listener {
 				spell = null;
 			}
 		}
-		double chatDistance = (double)p.getChatDistance();
-		List<StationarySpellObj> stationaries = p.checkForStationary(sender.getLocation());
-		Set<StationarySpellObj> muffliatos = new HashSet<StationarySpellObj>();
-		for (StationarySpellObj stationary : stationaries){
-			if (stationary.name.equals(StationarySpells.MUFFLIATO) && stationary.active){
-				muffliatos.add(stationary);
-			}
-		}
-		Set<Player> remRecipients = new HashSet<Player>();
-		for (Player recipient : recipients){
-			double distance;
-			try {
-				distance = recipient.getLocation().distance(sender.getLocation());
-			} catch (IllegalArgumentException e) {
-				distance = -1;
-			}
-			if (spell != null){
-				if (distance > chatDistance || distance == -1){
-					remRecipients.add(recipient);
-				}
-			}
-			if (muffliatos.size() > 0){
-				for (StationarySpellObj muffliato : muffliatos){
-					Location recLoc = recipient.getLocation();
-					if (!muffliato.isInside(recLoc)){
-						remRecipients.add(recipient);
-					}
-				}
-			}
-		}
-		for (Player remRec : remRecipients){
-			try {
-				if (remRec.isPermissionSet("Ollivanders.BYPASS")){
-					if (!remRec.hasPermission("Ollivanders.BYPASS")){
-						recipients.remove(remRec);
-					}
-				}
-				else{
-					recipients.remove(remRec);
-				}
-			} catch (UnsupportedOperationException e) {
-				p.getLogger().warning("Chat was unable to be removed due "
-						+ "to a unmodifiable set.");
-			}
-		}
+
+	    double chatDistance = (double)p.getChatDistance();
+	        List<StationarySpellObj> stationaries = p.checkForStationary(sender.getLocation());
+	        Set<StationarySpellObj> muffliatos = new HashSet<StationarySpellObj>();
+	        Set<StationarySpellObj> surdumliattos = new HashSet<StationarySpellObj>();
+	        for (StationarySpellObj stationary : stationaries){
+	            if (stationary.name.equals(StationarySpells.MUFFLIATO) && stationary.active){
+	                muffliatos.add(stationary);
+	            }
+	            if (stationary.name.equals(StationarySpells.SURDUMLIATTO) && stationary.active){
+	                surdumliattos.add(stationary);
+	            }
+	        }
+	        Set<Player> remRecipients = new HashSet<Player>();
+	        for (Player recipient : recipients){
+	  
+	            double distance;
+	            try {
+	                distance = recipient.getLocation().distance(sender.getLocation());
+	            } catch (IllegalArgumentException e) {
+	                distance = -1;
+	            }
+	            if (spell != null){
+	                if (distance > chatDistance || distance == -1){
+	                    remRecipients.add(recipient);
+	                }
+	            }
+	            if (muffliatos.size() > 0){
+	                for (StationarySpellObj muffliato : muffliatos){
+	                    Location recLoc = recipient.getLocation();
+	                    if (!muffliato.isInside(recLoc)){
+	                        remRecipients.add(recipient);
+	                    }
+	                }
+	            }
+	            
+	            Player sender2 = event.getPlayer();
+	                if (surdumliattos.size() > 0){
+	                    for (StationarySpellObj surdumliatto : surdumliattos){
+							Location senLoc = sender2.getLocation();
+	                        Location recLoc = recipient.getLocation();
+	                        if(!surdumliatto.isInside(senLoc) && surdumliatto.isInside(recLoc)){
+	                        	remRecipients.add(recipient);
+	                        }
+	                    }
+	            }
+	        }
+	        for (Player remRec : remRecipients){
+	            try {
+	                if (remRec.isPermissionSet("Ollivanders.BYPASS")){
+	                    if (!remRec.hasPermission("Ollivanders.BYPASS")){
+	                        recipients.remove(remRec);
+	                    }
+	                }
+	                else{
+	                    recipients.remove(remRec);
+	                }
+	            }
+	            catch (UnsupportedOperationException e) {
+	                p.getLogger().warning("Chat was unable to be removed due "
+	                        + "to a unmodifiable set.");
+	            }
+	        }
+	       
+	        
 		//End code for chat falloff
 
 		//Begin code for spell parsing
@@ -270,7 +291,7 @@ public class OllivandersListener implements Listener {
 			}
 			else{
 				int uses = p.getOPlayer(sender).getSpellCount().get(spell);
-				castSuccess = Math.random() < (1.0-(100.0/(uses+101.0)));
+				castSuccess = Math.random() > (1000.0/(uses+101.0));
 			}
 			if (castSuccess){
 				String[] words = message2.split(" ");
@@ -296,9 +317,9 @@ public class OllivandersListener implements Listener {
 					}
 				}
 			}
-		}
+		}}
 		//End code for spell parsing
-	}
+	
 
 	/**
 	 * Apparates sender to either specified location or to eye target location. Respects anti-apparition and anti-disapparition spells.
@@ -509,7 +530,7 @@ public class OllivandersListener implements Listener {
 			Spells[] spells = Spells.values();
 			List<Spells> knownSpells = new ArrayList<Spells>();
 			for (Spells spell : spells){
-				if (p.getSpellNum(event.getPlayer(), spell) >= 100){
+				if (p.getSpellNum(event.getPlayer(), spell) >= 10000){
 					//if (spell != Spells.AVADA_KEDAVRA && spell != Spells.CRUCIO && spell != Spells.IMPERIO){
 					if (spell != Spells.AVADA_KEDAVRA){
 						knownSpells.add(spell);
@@ -1123,21 +1144,67 @@ public class OllivandersListener implements Listener {
 	/**Event fires when a player right clicks with a broom in their hand
 	 * @param event
 	 */
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void broomClick(PlayerInteractEvent event){
-		if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK){
-			if (event.getPlayer().getItemInHand() != null){
-				if (p.isBroom(event.getPlayer().getItemInHand())){
-					UUID playerUid = event.getPlayer().getUniqueId();
-					Set<UUID> flying = OllivandersSchedule.getFlying();
-					if (flying.contains(playerUid)){
-						flying.remove(playerUid);
-					}
-					else{
-						flying.add(playerUid);
-					}
-				}
-			}
-		}
+	  @EventHandler(priority=EventPriority.HIGHEST)
+	  public void broomClick(PlayerInteractEvent event)
+	  {
+	    if (((event.getAction() == Action.RIGHT_CLICK_AIR) || (event.getAction() == Action.RIGHT_CLICK_BLOCK)) && 
+	      (event.getPlayer().getItemInHand() != null) && 
+	      (this.p.isBroom(event.getPlayer().getItemInHand())))
+	    {
+	      UUID playerUid = event.getPlayer().getUniqueId();
+	      Set<UUID> flying = OllivandersSchedule.getFlying();
+	      if (flying.contains(playerUid)) {
+	        flying.remove(playerUid);
+	      } else {
+	        flying.add(playerUid);
+	      }
+	    }
+	  }
+	  
+	  @EventHandler(priority=EventPriority.HIGHEST)
+	  public void spellPowerChange(PlayerItemHeldEvent event)
+	  {
+	    if ((holdsWand(event.getPlayer())) && (event.getPlayer().isSneaking()))
+	    {
+	      OPlayer op = this.p.getOPlayer(event.getPlayer());
+	      int prev = event.getPreviousSlot();
+	      int news = event.getNewSlot();
+	      int newPower = 0;
+	      if ((news - prev == 1) || ((news == 0) && (prev == 8)))
+	      {
+	        if (op.getPower() >= 10)
+	        {
+	          newPower = op.getPower() + 10;
+	          if (newPower > 100) {
+	            newPower = 100;
+	          }
+	        }
+	        else
+	        {
+	          newPower = op.getPower() + 1;
+	        }
+	        op.setPower(newPower);
+	        event.getPlayer().sendMessage(ChatColor.getByChar(this.p.getConfig().getString("chatColor")) + "Spell power level set to " + op.getPower() + "%.");
+	        event.setCancelled(true);
+	      }
+	      else if ((news - prev == -1) || ((news == 8) && (prev == 0)))
+	      {
+	        newPower = op.getPower() - 1;
+	        if (op.getPower() > 10)
+	        {
+	          newPower = op.getPower() - 10;
+	        }
+	        else
+	        {
+	          newPower = op.getPower() - 1;
+	          if (newPower < 1) {
+	            newPower = 1;
+	          }
+	        }
+	        op.setPower(newPower);
+	        event.getPlayer().sendMessage(ChatColor.getByChar(this.p.getConfig().getString("chatColor")) + "Spell power level set to " + op.getPower() + "%.");
+	        event.setCancelled(true);
+	      }
+	    }
+	  }
 	}
-}

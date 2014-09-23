@@ -1,0 +1,44 @@
+package Spell;
+
+import java.util.List;
+
+
+
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+
+import me.cakenggt.Ollivanders.Effects;
+import me.cakenggt.Ollivanders.OPlayer;
+import me.cakenggt.Ollivanders.Ollivanders;
+import me.cakenggt.Ollivanders.Spells;
+import me.cakenggt.Ollivanders.Transfiguration;
+
+/**Adds a INCARNATIO_VACCULA effect to player.
+
+ * @author lownes
+ *
+ */
+public class INCARNATIO_VACCULA extends Transfiguration implements Spell{
+
+    public INCARNATIO_VACCULA(Ollivanders plugin, Player player, Spells name,
+
+            Double rightWand) {
+        super(plugin, player, name, rightWand);
+    }
+
+    public void checkEffect() {
+        move();
+        List<LivingEntity> living = getLivingEntities(1);
+        for (LivingEntity live : living){
+            if (live instanceof Player){
+                Player ply = (Player)live;
+                OPlayer oply = p.getOPlayer(ply);
+                int dur = (int)(usesModifier*1200);
+                oply.addEffect(new Effect.INCARNATIO_VACCULA(player, Effects.INCARNATIO_VACCULA, dur));
+                p.setOPlayer(ply, oply);
+                kill();
+            }
+        }
+    }
+   
+}
